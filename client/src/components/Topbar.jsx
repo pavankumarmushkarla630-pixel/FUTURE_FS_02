@@ -10,6 +10,8 @@ const Topbar = ({ onAddLead }) => {
     if (location.pathname.startsWith('/leads/')) return 'Lead Details';
     if (location.pathname === '/leads') return 'All Leads';
     if (location.pathname === '/followups') return 'Follow-ups';
+    if (location.pathname === '/analytics') return 'Analytics';
+    if (location.pathname === '/profile') return 'My Profile';
     return 'Corelo';
   };
 

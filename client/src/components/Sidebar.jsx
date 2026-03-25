@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, CalendarCheck, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, BarChart3, UserCircle, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, reset } from '../store/authSlice';
 import { motion } from 'framer-motion';
@@ -20,6 +20,8 @@ const Sidebar = () => {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { name: 'Leads', icon: Users, path: '/leads' },
     { name: 'Follow-ups', icon: CalendarCheck, path: '/followups' },
+    { name: 'Analytics', icon: BarChart3, path: '/analytics' },
+    { name: 'Profile', icon: UserCircle, path: '/profile' },
   ];
 
   return (

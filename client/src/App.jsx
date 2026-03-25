@@ -8,6 +8,8 @@ import LeadDetail from './pages/LeadDetail';
 import Followups from './pages/Followups';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Analytics from './pages/Analytics';
+import Profile from './pages/Profile';
 import { useSelector } from 'react-redux';
 import PageWrapper from './components/PageWrapper';
 
@@ -56,6 +58,16 @@ const AnimatedRoutes = () => {
         <Route path='/followups' element={
           <PrivateRoute>
             <Layout><PageWrapper><Followups /></PageWrapper></Layout>
+          </PrivateRoute>
+        } />
+        <Route path='/analytics' element={
+          <PrivateRoute>
+            <Layout><PageWrapper><Analytics /></PageWrapper></Layout>
+          </PrivateRoute>
+        } />
+        <Route path='/profile' element={
+          <PrivateRoute>
+            <Layout><PageWrapper><Profile /></PageWrapper></Layout>
           </PrivateRoute>
         } />
       </Routes>

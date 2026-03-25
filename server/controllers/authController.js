@@ -107,3 +107,27 @@ export const logoutUser = asyncHandler(async (req, res) => {
   });
   return apiResponse(res, 200, { message: 'Logged out successfully' });
 });
+
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  // Get token from header or cookie
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies?.jwt) {
+    token = req.cookies.jwt;
+  }
+  if (!token) return apiError(res, 401, 'Not authorized');
+
+  const jwt = (await import('jsonwebtoken')).default;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+  const user = await User.findById(decoded.id);
+  if (!user) return apiError(res, 404, 'User not found');
+
+  const isMatch = await user.matchPassword(currentPassword);
+  if (!isMatch) return apiError(res, 400, 'Current password is incorrect');
+
+  user.password = newPassword;
+  await user.save();
+  return apiResponse(res, 200, { message: 'Password updated successfully' });
+});

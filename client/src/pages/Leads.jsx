@@ -1,11 +1,18 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLeads, createLead } from '../store/leadsSlice';
 import LeadTable from '../components/LeadTable';
 import LeadDrawer from '../components/LeadDrawer';
 import Toast from '../components/Toast';
 import { Search, Download, Plus } from 'lucide-react';
-import Topbar from '../components/Topbar';
+import axios from 'axios';
+
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+const getAuthHeaders = () => {
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+  return user?.token ? { Authorization: `Bearer ${user.token}` } : {};
+};
+
 
 const Leads = () => {
   const dispatch = useDispatch();
@@ -20,7 +27,7 @@ const Leads = () => {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [newLeadData, setNewLeadData] = useState({ name: '', email: '', company: '', source: 'Website', status: 'New', priority: 'Cold' });
+  const [newLeadData, setNewLeadData] = useState({ name: '', email: '', phone: '', company: '', source: 'Website', status: 'New', priority: 'Cold' });
 
   // Debounce search
   useEffect(() => {
@@ -46,8 +53,22 @@ const Leads = () => {
     }
   };
 
-  const exportCSV = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/leads/export/csv`;
+  const exportCSV = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/leads/export/csv`, {
+        headers: getAuthHeaders(),
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'leads.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('CSV export failed', err);
+    }
   };
 
   const handleCreateSubmit = async (e) => {
@@ -55,7 +76,7 @@ const Leads = () => {
     await dispatch(createLead(newLeadData));
     setIsDrawerOpen(false);
     setShowToast(true);
-    setNewLeadData({ name: '', email: '', company: '', source: 'Website', status: 'New', priority: 'Cold' });
+    setNewLeadData({ name: '', email: '', phone: '', company: '', source: 'Website', status: 'New', priority: 'Cold' });
     dispatch(getLeads()); // refresh
   };
 
@@ -124,6 +145,10 @@ const Leads = () => {
           <div>
             <label className='block text-xs font-medium text-textSecondary mb-1'>Email</label>
             <input type='email' className='input-field' value={newLeadData.email} onChange={e => setNewLeadData({...newLeadData, email: e.target.value})} />
+          </div>
+          <div>
+            <label className='block text-xs font-medium text-textSecondary mb-1'>Phone</label>
+            <input type='tel' className='input-field' value={newLeadData.phone} onChange={e => setNewLeadData({...newLeadData, phone: e.target.value})} placeholder='+1 234 567 8900' />
           </div>
           <div>
             <label className='block text-xs font-medium text-textSecondary mb-1'>Company</label>

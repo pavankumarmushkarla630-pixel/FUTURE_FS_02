@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, refreshUser, logoutUser } from '../controllers/authController.js';
+import { registerUser, loginUser, refreshUser, logoutUser, changePassword } from '../controllers/authController.js';
 import { validateRequest } from '../middleware/validate.js';
 import Joi from 'joi';
 
@@ -20,5 +20,6 @@ router.post('/register', validateRequest(registerSchema), registerUser);
 router.post('/login', validateRequest(loginSchema), loginUser);
 router.post('/refresh', refreshUser);
 router.post('/logout', logoutUser);
+router.put('/change-password', changePassword);
 
 export default router;
